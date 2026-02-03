@@ -9,6 +9,12 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.next
+out
+build
+dist
+.npm-cache
+.cache
 
 # testing
 /coverage
