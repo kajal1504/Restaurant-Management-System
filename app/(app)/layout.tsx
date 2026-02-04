@@ -1,14 +1,12 @@
 "use client";
 
-import React from "react"
-
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AuthProvider, useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/lib/auth-context";
 import { AppShell } from "@/components/app-shell";
-import { Spinner } from "@/components/ui/spinner";
+import { Loader2 } from "lucide-react";
 
-function ProtectedLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -22,24 +20,24 @@ function ProtectedLayout({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <Spinner className="h-8 w-8 text-primary" />
-          <p className="text-muted-foreground">Loading...</p>
+          <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          <p className="text-muted-foreground">staff...</p>
         </div>
       </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
+  // This wraps all your pages in the sidebar shell
   return <AppShell>{children}</AppShell>;
 }
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <AuthProvider>
-      <ProtectedLayout>{children}</ProtectedLayout>
-    </AuthProvider>
-  );
-}
+
+
+
+
+
+
+
+

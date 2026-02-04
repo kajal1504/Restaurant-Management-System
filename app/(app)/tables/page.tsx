@@ -32,10 +32,8 @@ export default function TablesPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  // FIXED: Add state for stable time calculation
   const [now, setNow] = useState<number>(0);
 
-  // FIXED: Initialize time in useEffect to fix purity error
   useEffect(() => {
     const timer = setTimeout(() => setNow(Date.now()), 0);
     return () => clearTimeout(timer);
@@ -65,7 +63,6 @@ export default function TablesPage() {
   };
 
   const formatTime = (date: Date) => {
-    // FIXED: Use state 'now' instead of impure Date.now()
     if (now === 0) return "";
     const diff = Math.floor((now - date.getTime()) / 60000);
     if (diff < 1) return "Just now";
@@ -73,25 +70,27 @@ export default function TablesPage() {
     return `${Math.floor(diff / 60)}h ${diff % 60}m`;
   };
 
+  // FIXED: Explicit Colors (Green, Red, Yellow)
   const getStatusColor = (status: TableStatus) => {
     switch (status) {
       case "available":
-        return "border-success/50 bg-success/10 hover:bg-success/20";
+        return "border-green-500/50 bg-green-500/20 hover:bg-green-500/30"; // Green
       case "occupied":
-        return "border-destructive/50 bg-destructive/10 hover:bg-destructive/20";
+        return "border-red-500/50 bg-red-500/20 hover:bg-red-500/30"; // Red
       case "reserved":
-        return "border-warning/50 bg-warning/10 hover:bg-warning/20";
+        return "border-yellow-500/50 bg-yellow-500/20 hover:bg-yellow-500/30"; // Yellow
     }
   };
 
+  // FIXED: Explicit Text Colors
   const getStatusTextColor = (status: TableStatus) => {
     switch (status) {
       case "available":
-        return "text-success";
+        return "text-green-500";
       case "occupied":
-        return "text-destructive";
+        return "text-red-500";
       case "reserved":
-        return "text-warning";
+        return "text-yellow-500";
     }
   };
 
@@ -129,41 +128,46 @@ export default function TablesPage() {
 
       {/* Status Summary */}
       <div className="grid gap-4 grid-cols-3">
-        <Card className="border-success/30 bg-success/5">
+        {/* FIXED: Green Card */}
+        <Card className="border-green-500/30 bg-green-500/5">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Available</p>
-                <p className="text-2xl font-bold text-success">{tableCounts.available}</p>
+                <p className="text-2xl font-bold text-green-500">{tableCounts.available}</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center">
-                <Grid3X3 className="h-5 w-5 text-success" />
+              <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                <Grid3X3 className="h-5 w-5 text-green-500" />
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-destructive/30 bg-destructive/5">
+        
+        {/* FIXED: Red Card */}
+        <Card className="border-red-500/30 bg-red-500/5">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Occupied</p>
-                <p className="text-2xl font-bold text-destructive">{tableCounts.occupied}</p>
+                <p className="text-2xl font-bold text-red-500">{tableCounts.occupied}</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-destructive/20 flex items-center justify-center">
-                <Users className="h-5 w-5 text-destructive" />
+              <div className="h-10 w-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                <Users className="h-5 w-5 text-red-500" />
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-warning/30 bg-warning/5">
+        
+        {/* FIXED: Yellow Card */}
+        <Card className="border-yellow-500/30 bg-yellow-500/5">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Reserved</p>
-                <p className="text-2xl font-bold text-warning">{tableCounts.reserved}</p>
+                <p className="text-2xl font-bold text-yellow-500">{tableCounts.reserved}</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-warning/20 flex items-center justify-center">
-                <Clock className="h-5 w-5 text-warning" />
+              <div className="h-10 w-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-yellow-500" />
               </div>
             </div>
           </CardContent>
@@ -200,7 +204,7 @@ export default function TablesPage() {
                     </span>
                     {activeOrder && (
                       <div className="absolute -top-2 -right-2">
-                        <Badge className="bg-info text-info-foreground text-xs animate-pulse">
+                        <Badge className="bg-blue-500 text-white text-xs animate-pulse">
                           Active
                         </Badge>
                       </div>
@@ -213,15 +217,15 @@ export default function TablesPage() {
             {/* Legend */}
             <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-border">
               <div className="flex items-center gap-2">
-                <div className="h-4 w-4 rounded border-2 border-success/50 bg-success/20" />
+                <div className="h-4 w-4 rounded border-2 border-green-500/50 bg-green-500/20" />
                 <span className="text-sm text-muted-foreground">Available</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-4 w-4 rounded border-2 border-destructive/50 bg-destructive/20" />
+                <div className="h-4 w-4 rounded border-2 border-red-500/50 bg-red-500/20" />
                 <span className="text-sm text-muted-foreground">Occupied</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-4 w-4 rounded border-2 border-warning/50 bg-warning/20" />
+                <div className="h-4 w-4 rounded border-2 border-yellow-500/50 bg-yellow-500/20" />
                 <span className="text-sm text-muted-foreground">Reserved</span>
               </div>
             </div>
@@ -257,7 +261,7 @@ export default function TablesPage() {
                           <p className="font-medium text-foreground">Table {table.number}</p>
                           <StatusBadge status={table.status} />
                           {activeOrder && (
-                            <Badge className="bg-info/20 text-info border-info/30">
+                            <Badge className="bg-blue-500/20 text-blue-500 border-blue-500/30">
                               Order #{activeOrder.id}
                             </Badge>
                           )}
@@ -326,7 +330,7 @@ export default function TablesPage() {
                 const activeOrder = getTableOrder(selectedTable.id);
                 if (activeOrder) {
                   return (
-                    <div className="p-4 rounded-lg border border-info/30 bg-info/5">
+                    <div className="p-4 rounded-lg border border-blue-500/30 bg-blue-500/5">
                       <div className="flex items-center justify-between mb-3">
                         <p className="font-medium text-foreground">Active Order</p>
                         <StatusBadge status={activeOrder.status} />
@@ -358,7 +362,7 @@ export default function TablesPage() {
                 return null;
               })()}
 
-              {/* Status Change */}
+              {/* Status Change - FIXED Buttons to match colors */}
               <div className="space-y-2">
                 <p className="text-sm font-medium text-foreground">Change Status</p>
                 <div className="grid grid-cols-3 gap-2">
@@ -366,7 +370,7 @@ export default function TablesPage() {
                     variant={selectedTable.status === "available" ? "default" : "outline"}
                     size="sm"
                     className={cn(
-                      selectedTable.status === "available" && "bg-success hover:bg-success/90"
+                      selectedTable.status === "available" && "bg-green-600 hover:bg-green-700"
                     )}
                     onClick={() => handleStatusChange(selectedTable.id, "available")}
                   >
@@ -376,7 +380,7 @@ export default function TablesPage() {
                     variant={selectedTable.status === "occupied" ? "default" : "outline"}
                     size="sm"
                     className={cn(
-                      selectedTable.status === "occupied" && "bg-destructive hover:bg-destructive/90"
+                      selectedTable.status === "occupied" && "bg-red-600 hover:bg-red-700"
                     )}
                     onClick={() => handleStatusChange(selectedTable.id, "occupied")}
                   >
@@ -386,7 +390,7 @@ export default function TablesPage() {
                     variant={selectedTable.status === "reserved" ? "default" : "outline"}
                     size="sm"
                     className={cn(
-                      selectedTable.status === "reserved" && "bg-warning hover:bg-warning/90"
+                      selectedTable.status === "reserved" && "bg-yellow-600 hover:bg-yellow-700"
                     )}
                     onClick={() => handleStatusChange(selectedTable.id, "reserved")}
                   >

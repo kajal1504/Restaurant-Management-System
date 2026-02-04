@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/stat-card";
-import { StatusBadge } from "@/components/status-badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { mockDashboardStats, mockOrders, mockTables } from "@/lib/mock-data";
 import type { DashboardStats, Order, Table, OrderStatus } from "@/lib/types";
+ 
 import {
   Grid3X3,
   ClipboardList,
@@ -16,13 +17,12 @@ import {
 } from "lucide-react";
 
 function RecentOrdersCard({ orders, isLoading }: { orders: Order[]; isLoading: boolean }) {
-  // FIXED: Added state to store current time stably
   const [now, setNow] = useState<number>(0);
 
- useEffect(() => {
-  const timer = setTimeout(() => setNow(Date.now()), 0); // Defer execution to satisfy linter
-  return () => clearTimeout(timer);
-}, []);
+  useEffect(() => {
+    const timer = setTimeout(() => setNow(Date.now()), 0); 
+    return () => clearTimeout(timer);
+  }, []);
 
   if (isLoading) {
     return (
@@ -44,7 +44,6 @@ function RecentOrdersCard({ orders, isLoading }: { orders: Order[]; isLoading: b
   }
 
   const formatTime = (date: Date) => {
-    // FIXED: Using state 'now' instead of impure Date.now()
     if (now === 0) return "Loading..."; 
     const diff = Math.floor((now - new Date(date).getTime()) / 60000);
     
@@ -94,9 +93,6 @@ function RecentOrdersCard({ orders, isLoading }: { orders: Order[]; isLoading: b
   );
 }
 
-// ... Rest of the file (TableOverviewCard, OrderStatusBreakdown, DashboardPage) remains unchanged
-// (Include the rest of the code here exactly as it was)
-
 function TableOverviewCard({ tables, isLoading }: { tables: Table[]; isLoading: boolean }) {
   if (isLoading) {
     return (
@@ -116,14 +112,15 @@ function TableOverviewCard({ tables, isLoading }: { tables: Table[]; isLoading: 
     );
   }
 
+  // FIXED: Updated colors to use explicit Tailwind classes for Green and Yellow
   const getTableBg = (status: string) => {
     switch (status) {
       case "available":
-        return "bg-success/20 border-success/30 text-success";
+        return "bg-green-500/20 border-green-500/30 text-green-500"; // Green for Available
       case "occupied":
-        return "bg-destructive/20 border-destructive/30 text-destructive";
+        return "bg-destructive/20 border-destructive/30 text-destructive"; // Red for Occupied
       case "reserved":
-        return "bg-warning/20 border-warning/30 text-warning";
+        return "bg-yellow-500/20 border-yellow-500/30 text-yellow-500"; // Yellow for Reserved
       default:
         return "bg-muted text-muted-foreground";
     }
@@ -149,7 +146,8 @@ function TableOverviewCard({ tables, isLoading }: { tables: Table[]; isLoading: 
         </div>
         <div className="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-border">
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-success" />
+            {/* FIXED: Legend color to match Green */}
+            <div className="h-3 w-3 rounded-full bg-green-500" />
             <span className="text-xs text-muted-foreground">Available</span>
           </div>
           <div className="flex items-center gap-2">
@@ -157,7 +155,8 @@ function TableOverviewCard({ tables, isLoading }: { tables: Table[]; isLoading: 
             <span className="text-xs text-muted-foreground">Occupied</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-warning" />
+            {/* FIXED: Legend color to match Yellow */}
+            <div className="h-3 w-3 rounded-full bg-yellow-500" />
             <span className="text-xs text-muted-foreground">Reserved</span>
           </div>
         </div>
@@ -184,10 +183,10 @@ function OrderStatusBreakdown({ stats, isLoading }: { stats: DashboardStats; isL
   }
 
   const statusColors: Record<OrderStatus, string> = {
-    pending: "bg-warning",
-    "in-preparation": "bg-info",
+    pending: "bg-yellow-500", // Fixed to standard yellow
+    "in-preparation": "bg-blue-500", // Fixed to standard blue
     served: "bg-primary",
-    completed: "bg-success",
+    completed: "bg-green-500", // Fixed to standard green
     cancelled: "bg-destructive",
   };
 
