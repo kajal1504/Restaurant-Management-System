@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {  mockOrders  } from "@/lib/mock-data";
+import { mockOrders } from "@/lib/mock-data";
 import {
   TrendingUp,
   TrendingDown,
@@ -19,7 +19,7 @@ import {
   Users,
   Clock,
   Star,
-  
+
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -97,215 +97,231 @@ export default function AnalyticsPage() {
   const maxOrders = Math.max(...analytics.hourlyData.map((h) => h.orders));
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
-          <p className="text-muted-foreground">
-            Insights and performance metrics for your restaurant.
-          </p>
-        </div>
-        <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="Time range" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="today">Today</SelectItem>
-            <SelectItem value="week">This Week</SelectItem>
-            <SelectItem value="month">This Month</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <div
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        backgroundImage: `url('/dashboard_shadow_bg.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      {/* Shadow Overlay (Vignette) */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.6)_100%)] pointer-events-none" />
 
-      {/* Key Metrics */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-        <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Orders</p>
-                <p className="text-2xl font-bold text-foreground">{analytics.totalOrders}</p>
-                <p className="text-xs text-success flex items-center gap-1 mt-1">
-                  <TrendingUp className="h-3 w-3" />
-                  +12% from yesterday
-                </p>
-              </div>
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <ShoppingBag className="h-5 w-5 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Existing Linear Gradient */}
+      <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/40 to-black/60 backdrop-blur-sm" />
 
-        <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Avg. Order Value</p>
-                <p className="text-2xl font-bold text-foreground">${analytics.avgOrderValue}</p>
-                <p className="text-xs text-success flex items-center gap-1 mt-1">
-                  <TrendingUp className="h-3 w-3" />
-                  +5% from yesterday
-                </p>
-              </div>
-              <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center">
-                <DollarSign className="h-5 w-5 text-success" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Table Turnover</p>
-                <p className="text-2xl font-bold text-foreground">{analytics.avgTableTurnover}x</p>
-                <p className="text-xs text-destructive flex items-center gap-1 mt-1">
-                  <TrendingDown className="h-3 w-3" />
-                  -3% from yesterday
-                </p>
-              </div>
-              <div className="h-10 w-10 rounded-lg bg-info/10 flex items-center justify-center">
-                <Users className="h-5 w-5 text-info" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border bg-card">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Satisfaction</p>
-                <p className="text-2xl font-bold text-foreground">{analytics.customerSatisfaction}/5</p>
-                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                  Based on 48 reviews
-                </p>
-              </div>
-              <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center">
-                <Star className="h-5 w-5 text-warning" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Top Selling Items */}
-        <Card className="border-border bg-card">
-          <CardHeader>
-            <CardTitle className="text-foreground">Top Selling Items</CardTitle>
-            <CardDescription>Most popular dishes by quantity sold</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {analytics.topSellingItems.map((item, index) => (
-                <div key={item.name} className="flex items-center gap-4">
-                  <div
-                    className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-full font-bold text-sm",
-                      index === 0
-                        ? "bg-warning/20 text-warning"
-                        : index === 1
-                        ? "bg-muted text-muted-foreground"
-                        : index === 2
-                        ? "bg-amber-600/20 text-amber-600"
-                        : "bg-secondary text-secondary-foreground"
-                    )}
-                  >
-                    {index + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground truncate">{item.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {item.quantity} sold &middot; ${item.revenue.toFixed(2)} revenue
-                    </p>
-                  </div>
-                  <Badge variant="secondary">{item.quantity}x</Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Busiest Tables */}
-        <Card className="border-border bg-card">
-          <CardHeader>
-            <CardTitle className="text-foreground">Busiest Tables</CardTitle>
-            <CardDescription>Tables with most orders today</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {analytics.busiestTables.map((table, index) => (
-                <div key={table.number} className="flex items-center gap-4">
-                  <div
-                    className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-lg font-bold",
-                      index === 0
-                        ? "bg-primary/20 text-primary"
-                        : "bg-secondary text-secondary-foreground"
-                    )}
-                  >
-                    T{table.number}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground">Table {table.number}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {table.orders} orders &middot; ${table.revenue.toFixed(2)} revenue
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-foreground">{table.orders}</p>
-                    <p className="text-xs text-muted-foreground">orders</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Hourly Orders Chart */}
-      <Card className="border-border bg-card">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-foreground">Orders by Hour</CardTitle>
-              <CardDescription>
-                Peak hour: {analytics.peakHour.hour} with {analytics.peakHour.orders} orders
-              </CardDescription>
-            </div>
-            <Badge className="bg-primary/20 text-primary border-primary/30 flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              Peak: {analytics.peakHour.hour}
-            </Badge>
+      <div className="relative z-10 p-6 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white drop-shadow-md text-shadow-strong">Analytics</h1>
+            <p className="text-white/80 drop-shadow-sm">
+              Insights and performance metrics for your restaurant.
+            </p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-end justify-between gap-2 h-48">
-            {analytics.hourlyData.map((hour) => {
-              const heightPercent = (hour.orders / maxOrders) * 100;
-              const isPeak = hour.hour === analytics.peakHour.hour;
-              return (
-                <div key={hour.hour} className="flex-1 flex flex-col items-center gap-2">
-                  <div className="w-full flex flex-col items-center">
-                    <span className="text-xs text-muted-foreground mb-1">{hour.orders}</span>
+          <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger className="w-36 bg-black/20 border-white/10 text-white focus:ring-white/20">
+              <SelectValue placeholder="Time range" />
+            </SelectTrigger>
+            <SelectContent className="bg-black/90 border-white/10 text-white backdrop-blur-xl">
+              <SelectItem value="today" className="focus:bg-white/10 focus:text-white cursor-pointer">Today</SelectItem>
+              <SelectItem value="week" className="focus:bg-white/10 focus:text-white cursor-pointer">This Week</SelectItem>
+              <SelectItem value="month" className="focus:bg-white/10 focus:text-white cursor-pointer">This Month</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Key Metrics */}
+        <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+          <Card className="border-white/10 bg-black/40 backdrop-blur-md shadow-xl hover:bg-black/50 transition-colors">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-white/70">Total Orders</p>
+                  <p className="text-2xl font-bold text-white drop-shadow-md">{analytics.totalOrders}</p>
+                  <p className="text-xs text-green-400 flex items-center gap-1 mt-1">
+                    <TrendingUp className="h-3 w-3" />
+                    +12% from yesterday
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center shadow-inner">
+                  <ShoppingBag className="h-5 w-5 text-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/10 bg-black/40 backdrop-blur-md shadow-xl hover:bg-black/50 transition-colors">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-white/70">Avg. Order Value</p>
+                  <p className="text-2xl font-bold text-white drop-shadow-md">${analytics.avgOrderValue}</p>
+                  <p className="text-xs text-green-400 flex items-center gap-1 mt-1">
+                    <TrendingUp className="h-3 w-3" />
+                    +5% from yesterday
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center shadow-inner">
+                  <DollarSign className="h-5 w-5 text-green-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/10 bg-black/40 backdrop-blur-md shadow-xl hover:bg-black/50 transition-colors">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-white/70">Table Turnover</p>
+                  <p className="text-2xl font-bold text-white drop-shadow-md">{analytics.avgTableTurnover}x</p>
+                  <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
+                    <TrendingDown className="h-3 w-3" />
+                    -3% from yesterday
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-lg bg-blue-500/20 flex items-center justify-center shadow-inner">
+                  <Users className="h-5 w-5 text-blue-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/10 bg-black/40 backdrop-blur-md shadow-xl hover:bg-black/50 transition-colors">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-white/70">Satisfaction</p>
+                  <p className="text-2xl font-bold text-white drop-shadow-md">{analytics.customerSatisfaction}/5</p>
+                  <p className="text-xs text-white/50 flex items-center gap-1 mt-1">
+                    Based on 48 reviews
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-lg bg-yellow-500/20 flex items-center justify-center shadow-inner">
+                  <Star className="h-5 w-5 text-yellow-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Top Selling Items */}
+          <Card className="border-white/10 bg-black/40 backdrop-blur-md shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-white drop-shadow-sm">Top Selling Items</CardTitle>
+              <CardDescription className="text-white/60">Most popular dishes by quantity sold</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {analytics.topSellingItems.map((item, index) => (
+                  <div key={item.name} className="flex items-center gap-4 border-b border-white/5 pb-2 last:border-0 last:pb-0">
                     <div
                       className={cn(
-                        "w-full rounded-t transition-all",
-                        isPeak ? "bg-primary" : "bg-primary/40"
+                        "flex h-8 w-8 items-center justify-center rounded-full font-bold text-sm shadow-sm",
+                        index === 0
+                          ? "bg-yellow-500/20 text-yellow-500 ring-1 ring-yellow-500/50"
+                          : index === 1
+                            ? "bg-white/20 text-white ring-1 ring-white/30"
+                            : index === 2
+                              ? "bg-amber-600/20 text-amber-500 ring-1 ring-amber-600/50"
+                              : "bg-white/10 text-white/50"
                       )}
-                      style={{ height: `${heightPercent}%`, minHeight: "8px" }}
-                    />
+                    >
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-white truncate">{item.name}</p>
+                      <p className="text-sm text-white/60">
+                        {item.quantity} sold &middot; ${item.revenue.toFixed(2)} revenue
+                      </p>
+                    </div>
+                    <Badge variant="secondary" className="bg-white/10 text-white hover:bg-white/20">{item.quantity}x</Badge>
                   </div>
-                  <span className="text-xs text-muted-foreground">{hour.hour}</span>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Busiest Tables */}
+          <Card className="border-white/10 bg-black/40 backdrop-blur-md shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-white drop-shadow-sm">Busiest Tables</CardTitle>
+              <CardDescription className="text-white/60">Tables with most orders today</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {analytics.busiestTables.map((table, index) => (
+                  <div key={table.number} className="flex items-center gap-4 border-b border-white/5 pb-2 last:border-0 last:pb-0">
+                    <div
+                      className={cn(
+                        "flex h-10 w-10 items-center justify-center rounded-lg font-bold shadow-inner",
+                        index === 0
+                          ? "bg-primary/20 text-primary ring-1 ring-primary/40"
+                          : "bg-white/10 text-white/70"
+                      )}
+                    >
+                      T{table.number}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-white">Table {table.number}</p>
+                      <p className="text-sm text-white/50">
+                        {table.orders} orders &middot; ${table.revenue.toFixed(2)} revenue
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium text-white">{table.orders}</p>
+                      <p className="text-xs text-white/50">orders</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Hourly Orders Chart */}
+        <Card className="border-white/10 bg-black/40 backdrop-blur-md shadow-xl">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-white drop-shadow-sm">Orders by Hour</CardTitle>
+                <CardDescription className="text-white/60">
+                  Peak hour: {analytics.peakHour.hour} with {analytics.peakHour.orders} orders
+                </CardDescription>
+              </div>
+              <Badge className="bg-primary/20 text-primary border-primary/30 flex items-center gap-1 shadow-sm">
+                <Clock className="h-3 w-3" />
+                Peak: {analytics.peakHour.hour}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end justify-between gap-2 h-48">
+              {analytics.hourlyData.map((hour) => {
+                const heightPercent = (hour.orders / maxOrders) * 100;
+                const isPeak = hour.hour === analytics.peakHour.hour;
+                return (
+                  <div key={hour.hour} className="flex-1 flex flex-col items-center gap-2">
+                    <div className="w-full flex flex-col items-center">
+                      <span className="text-xs text-white/50 mb-1">{hour.orders}</span>
+                      <div
+                        className={cn(
+                          "w-full rounded-t transition-all shadow-sm",
+                          isPeak ? "bg-primary shadow-primary/30" : "bg-white/20 hover:bg-white/30"
+                        )}
+                        style={{ height: `${heightPercent}%`, minHeight: "8px" }}
+                      />
+                    </div>
+                    <span className="text-xs text-white/50">{hour.hour}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

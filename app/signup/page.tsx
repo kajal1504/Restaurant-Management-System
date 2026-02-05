@@ -25,17 +25,30 @@ export default function SignupPage() {
       };
 
       return (
-            <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
-                  <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
-                  <Card className="w-full max-w-md border-border bg-card shadow-2xl relative z-10">
+            <div
+                  className="min-h-screen flex items-center justify-center relative overflow-hidden"
+                  style={{
+                        backgroundImage: `url('/dashboard_shadow_bg.png')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed',
+                  }}
+            >
+                  {/* Shadow Overlay (Vignette) */}
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.6)_100%)] pointer-events-none" />
+
+                  {/* Linear Gradient */}
+                  <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/40 to-black/60 backdrop-blur-sm pointer-events-none" />
+
+                  <Card className="w-full max-w-md border-white/10 bg-black/40 backdrop-blur-md shadow-2xl relative z-10">
                         <CardHeader className="space-y-1 text-center">
                               <div className="flex justify-center mb-4">
                                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                                           <UtensilsCrossed className="h-7 w-7" />
                                     </div>
                               </div>
-                              <CardTitle className="text-2xl font-bold text-foreground">Create an Account</CardTitle>
-                              <CardDescription className="text-muted-foreground">
+                              <CardTitle className="text-2xl font-bold text-white drop-shadow-md">Create an Account</CardTitle>
+                              <CardDescription className="text-white/80">
                                     Get started with TableFlow
                               </CardDescription>
                         </CardHeader>
@@ -48,7 +61,7 @@ export default function SignupPage() {
                                           </Alert>
                                     )}
                                     <div className="space-y-2">
-                                          <Label htmlFor="email" className="text-foreground">Email</Label>
+                                          <Label htmlFor="email" className="text-white">Email</Label>
                                           <Input
                                                 id="email"
                                                 type="email"
@@ -56,14 +69,14 @@ export default function SignupPage() {
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
                                                 required
-                                                className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                                                className="bg-black/20 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-white/20"
                                           />
                                     </div>
 
                                     <div className="space-y-2">
-                                          <Label htmlFor="role" className="text-foreground">Role</Label>
+                                          <Label htmlFor="role" className="text-white">Role</Label>
                                           <Select value={role} onValueChange={setRole}>
-                                                <SelectTrigger className="bg-input border-border text-foreground">
+                                                <SelectTrigger className="bg-black/20 border-white/10 text-white focus:ring-white/20">
                                                       <SelectValue placeholder="Select a role" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -78,7 +91,7 @@ export default function SignupPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                          <Label htmlFor="password" className="text-foreground">Password</Label>
+                                          <Label htmlFor="password" className="text-white">Password</Label>
                                           <div className="relative">
                                                 <Input
                                                       id="password"
@@ -87,7 +100,7 @@ export default function SignupPage() {
                                                       value={password}
                                                       onChange={(e) => setPassword(e.target.value)}
                                                       required
-                                                      className="bg-input border-border text-foreground placeholder:text-muted-foreground pr-10"
+                                                      className="bg-black/20 border-white/10 text-white placeholder:text-white/40 pr-10 focus-visible:ring-white/20"
                                                 />
                                                 <button
                                                       type="button"
@@ -110,7 +123,7 @@ export default function SignupPage() {
                                     </Button>
                               </form>
                               <div className="mt-6 text-center text-sm">
-                                    <span className="text-muted-foreground">Already have an account? </span>
+                                    <span className="text-white/60">Already have an account? </span>
                                     <Link href="/" className="text-primary hover:underline font-medium">
                                           Sign In
                                     </Link>

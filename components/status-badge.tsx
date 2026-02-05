@@ -14,36 +14,36 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     switch (status) {
       // Table statuses
       case "available":
-        return "bg-success/20 text-success border-success/30 hover:bg-success/30";
+        return "bg-green-500/20 text-green-500 border-green-500/30 hover:bg-green-500/30";
       case "occupied":
-        return "bg-destructive/20 text-destructive border-destructive/30 hover:bg-destructive/30";
+        return "bg-red-500/20 text-red-500 border-red-500/30 hover:bg-red-500/30";
       case "reserved":
-        return "bg-warning/20 text-warning border-warning/30 hover:bg-warning/30";
+        return "bg-yellow-500/20 text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/30";
       // Order statuses
       case "pending":
-        return "bg-warning/20 text-warning border-warning/30 hover:bg-warning/30";
+        return "bg-yellow-500/20 text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/30";
       case "in-preparation":
-        return "bg-info/20 text-info border-info/30 hover:bg-info/30";
+        return "bg-blue-500/20 text-blue-500 border-blue-500/30 hover:bg-blue-500/30";
       case "served":
         return "bg-primary/20 text-primary border-primary/30 hover:bg-primary/30";
       case "completed":
-        return "bg-success/20 text-success border-success/30 hover:bg-success/30";
+        return "bg-green-500/20 text-green-500 border-green-500/30 hover:bg-green-500/30";
       case "cancelled":
-        return "bg-destructive/20 text-destructive border-destructive/30 hover:bg-destructive/30";
+        return "bg-red-500/20 text-red-500 border-red-500/30 hover:bg-red-500/30";
       default:
         return "bg-muted text-muted-foreground";
     }
   };
 
   const formatStatus = (status: string) => {
-    return status.split("-").map(word => 
+    return status.split("-").map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(" ");
   };
 
   return (
-    <Badge 
-      variant="outline" 
+    <Badge
+      variant="outline"
       className={cn(
         "font-medium text-xs border transition-colors",
         getStatusStyles(),

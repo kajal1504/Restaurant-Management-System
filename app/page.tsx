@@ -16,61 +16,106 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  const { login, loading: isLoading, error } = useAuth();
+  // Reset Password State
+  const [resetEmail, setResetEmail] = useState("");
+  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const { login, resetPassword, loading: isLoading, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await login(email, password);
   };
 
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsResetting(true);
+    const newPass = await resetPassword(resetEmail);
+    setGeneratedPassword(newPass);
+    setIsResetting(false);
+  };
+
   if (showForgotPassword) {
     return (
-      <Card className="w-full max-w-md border-border bg-card shadow-2xl relative z-10">
+      <Card className="w-full max-w-md border-white/10 bg-black/40 backdrop-blur-md shadow-2xl relative z-10 transition-all duration-300">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold text-foreground">Reset Password</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Enter your email address and we will send you a reset link.
+          <CardTitle className="text-2xl font-bold text-white drop-shadow-md">Reset Password</CardTitle>
+          <CardDescription className="text-white/80">
+            Enter your email to generate a new temporary password.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="reset-email" className="text-foreground">Email</Label>
-              <Input
-                id="reset-email"
-                type="email"
-                placeholder="Enter your email"
-                className="bg-input border-border text-foreground placeholder:text-muted-foreground"
-              />
+          {!generatedPassword ? (
+            <form onSubmit={handleReset} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="reset-email" className="text-white">Email</Label>
+                <Input
+                  id="reset-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  className="bg-black/20 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-white/20"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={isResetting}>
+                {isResetting ? (
+                  <>
+                    <Spinner className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : "Generate New Password"}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full text-white/60 hover:text-white hover:bg-white/10"
+                onClick={() => setShowForgotPassword(false)}
+              >
+                Back to Login
+              </Button>
+            </form>
+          ) : (
+            <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
+              <div className="p-4 rounded-lg bg-green-500/20 border border-green-500/30">
+                <p className="text-sm text-green-200 mb-2">New Password Generated:</p>
+                <p className="text-2xl font-mono font-bold text-white tracking-wider select-all cursor-text bg-black/20 p-2 rounded">
+                  {generatedPassword}
+                </p>
+              </div>
+              <p className="text-sm text-white/60">
+                Please use this password to login. You can change it later in settings.
+              </p>
+              <Button
+                onClick={() => {
+                  setShowForgotPassword(false);
+                  setEmail(resetEmail);
+                  setPassword(generatedPassword);
+                }}
+                className="w-full"
+              >
+                Go to Login
+              </Button>
             </div>
-            <Button type="submit" className="w-full">
-              Send Reset Link
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              className="w-full text-muted-foreground"
-              onClick={() => setShowForgotPassword(false)}
-            >
-              Back to Login
-            </Button>
-          </form>
+          )}
         </CardContent>
       </Card>
     );
   }
 
   return (
-    // FIXED: Added 'relative z-10' to ensure the card is ABOVE the background
-    <Card className="w-full max-w-md border-border bg-card shadow-2xl relative z-10">
+
+    <Card className="w-full max-w-md border-white/10 bg-black/40 backdrop-blur-md shadow-2xl relative z-10">
       <CardHeader className="space-y-1 text-center">
         <div className="flex justify-center mb-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <UtensilsCrossed className="h-7 w-7" />
           </div>
         </div>
-        <CardTitle className="text-2xl font-bold text-foreground">Welcome back</CardTitle>
-        <CardDescription className="text-muted-foreground">
+        <CardTitle className="text-2xl font-bold text-white drop-shadow-md">Welcome back</CardTitle>
+        <CardDescription className="text-white/80">
           Sign in to TableFlow to manage your restaurant
         </CardDescription>
       </CardHeader>
@@ -83,7 +128,7 @@ function LoginForm() {
             </Alert>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-foreground">Email</Label>
+            <Label htmlFor="email" className="text-white">Email</Label>
             <Input
               id="email"
               type="email"
@@ -92,12 +137,12 @@ function LoginForm() {
               // This onChange ensures you can type in the box
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+              className="bg-black/20 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-white/20"
             />
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password" className="text-foreground">Password</Label>
+              <Label htmlFor="password" className="text-white">Password</Label>
               <button
                 type="button"
                 className="text-xs text-primary hover:underline"
@@ -114,7 +159,7 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-input border-border text-foreground placeholder:text-muted-foreground pr-10"
+                className="bg-black/20 border-white/10 text-white placeholder:text-white/40 pr-10 focus-visible:ring-white/20"
               />
               <button
                 type="button"
@@ -142,19 +187,19 @@ function LoginForm() {
             Sign Up
           </Link>
         </div>
-        <div className="mt-6 pt-6 border-t border-border">
-          <p className="text-xs text-muted-foreground text-center mb-3">Demo credentials:</p>
+        <div className="mt-6 pt-6 border-t border-white/10">
+          <p className="text-xs text-white/60 text-center mb-3">Demo credentials:</p>
           <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="p-2 rounded bg-secondary/50">
-              <p className="font-medium text-foreground">Admin</p>
-              <p className="text-muted-foreground">admin@tableflow.com</p>
+            <div className="p-2 rounded bg-white/5 border border-white/10">
+              <p className="font-medium text-white">Admin</p>
+              <p className="text-white/60">admin@tableflow.com</p>
             </div>
-            <div className="p-2 rounded bg-secondary/50">
-              <p className="font-medium text-foreground">Waiter</p>
-              <p className="text-muted-foreground">waiter@tableflow.com</p>
+            <div className="p-2 rounded bg-white/5 border border-white/10">
+              <p className="font-medium text-white">Waiter</p>
+              <p className="text-white/60">waiter@tableflow.com</p>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground text-center mt-2">Password: password123</p>
+          <p className="text-xs text-white/60 text-center mt-2">Password: password123</p>
         </div>
       </CardContent>
     </Card>
@@ -164,9 +209,21 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <AuthProvider>
-      <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
-        {/* FIXED: Added 'pointer-events-none' so clicks pass through this background layer */}
-        <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+      <div
+        className="min-h-screen flex items-center justify-center relative overflow-hidden"
+        style={{
+          backgroundImage: `url('/dashboard_shadow_bg.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Shadow Overlay (Vignette) */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.6)_100%)] pointer-events-none" />
+
+        {/* Linear Gradient */}
+        <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/40 to-black/60 backdrop-blur-sm pointer-events-none" />
+
         <LoginForm />
       </div>
     </AuthProvider>

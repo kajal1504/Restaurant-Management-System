@@ -47,9 +47,9 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${geistMono.variable} font-sans antialiased`}>
         <AuthProvider>
-        {children}
-        <Toaster />
-        <Analytics />
+          {children}
+          <Toaster />
+          <Analytics />
         </AuthProvider>
       </body>
     </html>

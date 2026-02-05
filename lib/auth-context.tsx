@@ -19,6 +19,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, role: string) => Promise<void>;
   logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<string>;
   role: 'admin' | 'staff' | 'kitchen' | 'waiter' | 'manager' | 'cashier' | null;
 }
 
@@ -55,31 +56,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     setLoading(true);
     setError(null);
-    console.log("Attempting login for:", email); // DEBUG LOG
+    console.log("Attempting login for:", email);  
 
     try {
       // 1. Authenticate
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
-      console.log("Auth Successful. UID:", firebaseUser.uid); // DEBUG LOG
+      console.log("Auth Successful. UID:", firebaseUser.uid);  
 
       // 2. Get Role
       const docRef = doc(db, "users", firebaseUser.uid);
       const userDoc = await getDoc(docRef);
 
-      let userRole: AuthContextType['role'] = 'waiter'; // Default fallback
+      let userRole: AuthContextType['role'] = 'waiter';  
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        console.log("Firestore Data Found:", userData); // DEBUG LOG
+        console.log("Firestore Data Found:", userData);  
         userRole = userData.role;
         setRole(userData.role);
       } else {
-        console.error("No User Document found in Firestore for this UID!"); // CRITICAL DEBUG LOG
+        console.error("No User Document found in Firestore for this UID!");  
         console.log("Please create a document in 'users' collection with ID:", firebaseUser.uid);
       }
 
-      console.log("Redirecting based on role:", userRole); // DEBUG LOG
+      console.log("Redirecting based on role:", userRole);  
 
       // 3. Redirect
       if (userRole === 'admin' || userRole === 'manager') {
@@ -158,8 +159,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const resetPassword = async (email: string): Promise<string> => {
+    // Simulating API call
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve("TableFlow2026!");
+      }, 1000);
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, role }}>
+    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, role, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

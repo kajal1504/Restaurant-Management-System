@@ -244,8 +244,8 @@ export function CreateOrderDialog({
             </div>
 
             {/* Cart Section */}
-            <div className="flex flex-col border-l border-border pl-4">
-              <div className="flex items-center gap-2 mb-4">
+            <div className="flex flex-col border-l border-border pl-4 h-full overflow-hidden">
+              <div className="flex items-center gap-2 mb-4 shrink-0">
                 <ShoppingCart className="h-5 w-5 text-primary" />
                 <h3 className="font-semibold text-foreground">Order Summary</h3>
                 {cart.length > 0 && (
@@ -263,8 +263,8 @@ export function CreateOrderDialog({
                 </div>
               ) : (
                 <>
-                  <ScrollArea className="flex-1 h-[280px]">
-                    <div className="space-y-3 pr-2">
+                  <div className="flex-1 w-full overflow-y-auto custom-scrollbar pr-2 pb-4">
+                    <div className="space-y-3">
                       {cart.map((item) => (
                         <div
                           key={item.menuItem.id}
@@ -344,9 +344,9 @@ export function CreateOrderDialog({
                         </div>
                       ))}
                     </div>
-                  </ScrollArea>
+                  </div>
 
-                  <div className="mt-4 pt-4 border-t border-border space-y-2">
+                  <div className="mt-auto pt-4 border-t border-border space-y-2 shrink-0">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
                       <span className="text-foreground">${subtotal.toFixed(2)}</span>
@@ -370,7 +370,11 @@ export function CreateOrderDialog({
         </div>
 
         <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={handleClose}>
+          <Button
+            variant="destructive"
+            onClick={handleClose}
+            className="bg-red-500 hover:bg-red-600 text-white"
+          >
             Cancel
           </Button>
           <Button
