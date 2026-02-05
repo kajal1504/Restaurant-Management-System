@@ -136,6 +136,10 @@ export const addTable = async (tableData: Omit<Table, "id">) => {
       return docRef.id;
 };
 
+export const deleteTable = async (tableId: string) => {
+      await deleteDoc(doc(db, COLLECTION_TABLES, tableId));
+};
+
 // --- ORDER SERVICES ---
 
 // Generic converter to avoid repetition

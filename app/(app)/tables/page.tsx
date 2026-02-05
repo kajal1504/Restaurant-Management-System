@@ -21,14 +21,14 @@ import {
 import { StatusBadge } from "@/components/status-badge";
 import { mockOrders } from "@/lib/mock-data";
 import type { Table, TableStatus, Order } from "@/lib/types";
-import { Users, Clock, DollarSign, ArrowRight, RefreshCw, Grid3X3, Database } from "lucide-react";
+import { Users, Clock, DollarSign, ArrowRight, RefreshCw, Grid3X3, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
   subscribeToTables,
   updateTableStatus,
-  seedDatabase,
-  addTable
+  addTable,
+  deleteTable
 } from "@/lib/services";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,13 +90,17 @@ export default function TablesPage() {
     }, 1000);
   };
 
-  const handleSeed = async () => {
-    try {
-      await seedDatabase();
-      toast.success("Database seeded with mock data!");
-    } catch (e) {
-      toast.error("Seeding failed check console");
-      console.error(e);
+  const handleDeleteTable = async (e: React.MouseEvent, tableId: string, tableNumber: number) => {
+    e.stopPropagation(); // Prevent opening the dialog
+    if (confirm(`Are you sure you want to delete Table ${tableNumber}?`)) {
+      try {
+        await deleteTable(tableId);
+        toast.success(`Table ${tableNumber} deleted`);
+        if (selectedTable?.id === tableId) setSelectedTable(null);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to delete table");
+      }
     }
   };
 
@@ -190,9 +194,6 @@ export default function TablesPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleSeed} className="text-white hover:bg-white/10 hover:text-white">
-              <Database className="mr-2 h-4 w-4" /> Seed
-            </Button>
             <Button onClick={() => setIsAddTableOpen(true)} className="shadow-lg shadow-primary/20">
               <Plus className="mr-2 h-4 w-4" /> Add Table
             </Button>
@@ -290,6 +291,16 @@ export default function TablesPage() {
                         <Users className="h-3 w-3" />
                         {table.capacity}
                       </span>
+
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                        onClick={(e) => handleDeleteTable(e, table.id, table.number)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+
                       {activeOrder && (
                         <div className="absolute -top-2 -right-2">
                           <Badge className="bg-blue-500 text-white text-xs animate-pulse">
@@ -368,6 +379,14 @@ export default function TablesPage() {
                       <Button variant="ghost" onClick={() => setSelectedTable(table)} className="text-white/80 hover:text-white hover:bg-white/10">
                         View Details
                         <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="ml-2 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                        size="icon"
+                        onClick={(e) => handleDeleteTable(e, table.id, table.number)}
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   );
@@ -453,12 +472,15 @@ export default function TablesPage() {
                 {/* Status Change - FIXED Buttons to match colors */}
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-foreground">Change Status</p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     <Button
                       variant={selectedTable.status === "available" ? "default" : "outline"}
                       size="sm"
                       className={cn(
-                        selectedTable.status === "available" && "bg-green-600 hover:bg-green-700"
+                        "text-black",
+                        selectedTable.status === "available"
+                          ? "bg-green-500 hover:bg-green-600"
+                          : "bg-white/10 hover:bg-white/20 text-white border-white/20"
                       )}
                       onClick={() => handleStatusChange(selectedTable.id, "available")}
                     >
@@ -468,7 +490,10 @@ export default function TablesPage() {
                       variant={selectedTable.status === "occupied" ? "default" : "outline"}
                       size="sm"
                       className={cn(
-                        selectedTable.status === "occupied" && "bg-red-600 hover:bg-red-700"
+                        "text-black",
+                        selectedTable.status === "occupied"
+                          ? "bg-red-500 hover:bg-red-600"
+                          : "bg-white/10 hover:bg-white/20 text-white border-white/20"
                       )}
                       onClick={() => handleStatusChange(selectedTable.id, "occupied")}
                     >
@@ -478,11 +503,22 @@ export default function TablesPage() {
                       variant={selectedTable.status === "reserved" ? "default" : "outline"}
                       size="sm"
                       className={cn(
-                        selectedTable.status === "reserved" && "bg-yellow-600 hover:bg-yellow-700"
+                        "text-black",
+                        selectedTable.status === "reserved"
+                          ? "bg-yellow-500 hover:bg-yellow-600"
+                          : "bg-white/10 hover:bg-white/20 text-white border-white/20"
                       )}
                       onClick={() => handleStatusChange(selectedTable.id, "reserved")}
                     >
                       Reserved
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="bg-red-600 hover:bg-red-700 text-black font-semibold"
+                      onClick={(e) => handleDeleteTable(e, selectedTable.id, selectedTable.number)}
+                    >
+                      Remove
                     </Button>
                   </div>
                 </div>
